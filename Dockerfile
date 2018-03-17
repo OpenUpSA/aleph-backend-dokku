@@ -1,1 +1,1 @@
-FROM jbothma/aleph
+FROM jbothma/aleph:sqs-region
