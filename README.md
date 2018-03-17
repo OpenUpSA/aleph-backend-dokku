@@ -1,6 +1,8 @@
 Dockerfile deployment to Dokku of Aleph backend components
 ----------------------------------------------------------
 
+dokku apps:create publicpeople-aleph
+
 Set the config variables.
 
 `ALEPH_NAME` must be specific to this project because it's used as the ElasticSearch index name.
@@ -28,12 +30,16 @@ dokku config:set publicpeople-aleph-api \
     ALEPH_MAIL_ADMIN=jbothma+publicpeople@gmail.com \
     ALEPH_MAIL_USERNAME=apikey \
     ALEPH_MAIL_PASSWORD= \
-    ALEPH_MAIL_PORT= \
+    ALEPH_MAIL_PORT=587 \
     ALEPH_LANGUAGES=en:afr
 ```
 
 Configure the start command
 
 ```
-dokku config:set publicpeople-aleph-api DOKKU_DOCKERFILE_START_CMD=gunicorn -w 2 -b 0.0.0.0:5000 --log-level info --log-file - aleph.manage:app
+dokku config:set publicpeople-aleph-api "DOKKU_DOCKERFILE_START_CMD=gunicorn -w 2 -b 0.0.0.0:5000 --log-level info --log-file - aleph.manage:app"
+```
+
+```
+dokku config:set publicpeople-aleph-worker "DOKKU_DOCKERFILE_START_CMD=celery -A aleph.queues -B -c 4 -l INFO worker"
 ```
